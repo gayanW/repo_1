@@ -21,11 +21,11 @@ package player
 		private var acceleration:Number;
 		public var body:Body;
 		
-		public function Player(position:Vec2, w:Number = 30, h:Number= 30) 
+		public function Player(position:Vec2, w:Number = 26, h:Number= 26) 
 		{
 			initBody(position, w, h);
 		
-			acceleration = 2;
+			acceleration = 3;
 			force = body.mass * acceleration;
 		
 		}
@@ -41,6 +41,7 @@ package player
 			body = new Body(BodyType.DYNAMIC, position);
 			body.shapes.add(shape);
 			body.position = position;
+			body.allowRotation = false;
 			body.space = Phys.space;
 			
 		}

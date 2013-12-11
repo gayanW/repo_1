@@ -54,7 +54,7 @@ package game.phys
 			
 			// setup space
 			space = new Space(_gravity);
-			space.worldLinearDrag = 0.65;
+			space.worldLinearDrag = 1.3;
 			space.worldAngularDrag = 1.2;
 					
 			// setup debug draw

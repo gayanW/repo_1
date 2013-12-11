@@ -25,7 +25,7 @@ package enemy
 		private var _updateCount:uint = 0;
 		private var _updateLimit:uint = 5000;
 		
-		private var _vel:Vec2;
+		private var _direction:Vec2;
 		
 		public static var enemies:Vector.<Enemy> = new Vector.<Enemy>();
 		
@@ -64,25 +64,25 @@ package enemy
 		public function update():void
 		{
 			if (true)
-			{	trace(position.toString(), target.toString())
+			{	
 				if (Vec2.distance(position, target) < 1)
-				{	trace("switch target");
+				{	
 					// switch targets
 					if (target == _pointA) target = _pointB;
 					else target = _pointA;
 				}
 				
 				// move towards the target location
-				body.position.addeq(_vel);
+				body.position.addeq(_direction);
 			}
 				
 		}
 		
 		public function set target(location:Vec2):void
-		{	trace("setTarget");
+		{	
 			_target = location;
 			// compute velcity according to the new target
-			_vel = _target.sub(position).unit();
+			_direction = _target.sub(position).unit();
 		}
 		
 		public function get target():Vec2
@@ -95,6 +95,11 @@ package enemy
 			return body.position;
 		}
 		
+		public function get direction():Vec2
+		{
+			return _direction;
+		}
+		
 		public static function at(index:uint):Enemy
 		{
 			return enemies[index];
@@ -104,6 +109,8 @@ package enemy
 		{
 			return enemies[index].position;
 		}
+		
+		
 		
 	}
 

@@ -51,6 +51,7 @@ package scenes
 		private var _rayResult:RayResult;
 		private var _rayResultList:RayResultList;
 		private var _intersection:Vec2;
+		private var _inRange:Boolean;
 		private var _raySprite:flash.display.Sprite;
 		
 		
@@ -203,19 +204,35 @@ package scenes
 			// iterate through all the enemies
 			for (var i:int = 0; i < Enemy.enemies.length; ++i)
 			{
+				var currentEnemy:Enemy = Enemy.at(i);
 				var enemyPos:Vec2 = Enemy.positionAt(i);
 				
+				// cast a ray from enemy to player
 				_ray = Ray.fromSegment(enemyPos, _player.position);
 				_ray.maxDistance = 200;
-			
+				
+				// check if the ray is withing the enemy's sight
+				if (Math.abs(_ray.direction.angle - currentEnemy.direction.angle) < Math.PI * 0.4)
+					_inRange = true;
+				else
+					_inRange = false;
+					
 				_rayResult = Phys.space.rayCast(_ray);
 				
-				if (_rayResult)
-				{
-					_intersection = _ray.at(_rayResult.distance);
+				if (_rayResult && _inRange)
+				{	
+					if (_rayResult.shape.body == _player.body)
+					{
+						_intersection = _ray.at(_rayResult.distance);
+						
+						// draw
+						if (_inRange) _raySprite.graphics.lineStyle(1, Color.RED);
+						_raySprite.graphics.moveTo(enemyPos.x, enemyPos.y);
+						_raySprite.graphics.lineTo(_intersection.x, _intersection.y);
 					
-					_raySprite.graphics.moveTo(enemyPos.x, enemyPos.y);
-					_raySprite.graphics.lineTo(_intersection.x, _intersection.y);
+					}
+					
+					
 				}
 
 			}
