@@ -83,23 +83,33 @@ package game.phys
 			var h:int = Const.GameHeight;
 			
 			obstacles = new Body(BodyType.STATIC);
-			obstacles.shapes.add(new Polygon(Polygon.rect(0, 0, w, -3)));	// top
-			obstacles.shapes.add(new Polygon(Polygon.rect(0, h, w, 3)));	// bottom
-			obstacles.shapes.add(new Polygon(Polygon.rect(0, 0, -3, h)));	// left
-			obstacles.shapes.add(new Polygon(Polygon.rect(w, 0, 3, h)));	// right
+			obstacles.shapes.add(new Polygon(Polygon.rect(0, 0, w, -10)));	// top
+			obstacles.shapes.add(new Polygon(Polygon.rect(0, h, w, 10)));	// bottom
+			obstacles.shapes.add(new Polygon(Polygon.rect(0, 0, -10, h)));	// left
+			obstacles.shapes.add(new Polygon(Polygon.rect(w, 0, 10, h)));	// right
 			
 			obstacles.space = space;
 		}
 		
-		public static function addObstacle(position:Vec2):void
+		public static function addObstacle(position:Vec2, w:Number = 30, h:Number = 30):void
+		{
+			var x:Number = position.x;
+			var y:Number = position.y;
+						
+			obstacles.space = null;
+			obstacles.shapes.add(new Polygon(Polygon.rect(x, y, w, h)));
+			obstacles.space = space;
+		}
+		
+		public static function addDynamicBox(position:Vec2):void
 		{
 			var x:Number = position.x;
 			var y:Number = position.y;
 			var w:Number = 30, h:Number = 30;
 			
-			obstacles.space = null;
-			obstacles.shapes.add(new Polygon(Polygon.rect(x, y, w, h)));
-			obstacles.space = space;
+			var dynamicBox:Body = new Body(BodyType.DYNAMIC, position);
+			dynamicBox.shapes.add(new Polygon(Polygon.rect(x, y, w, h)));
+			dynamicBox.space = space;
 		}
 
 		

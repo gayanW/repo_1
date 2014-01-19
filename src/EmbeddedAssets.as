@@ -38,5 +38,12 @@ package
         
         [Embed(source="../assets/audio/wing_flap.mp3")]
         public static const wing_flap:Class;
+		
+		// Level Data
+		[Embed(source = "./level_data.json", mimeType="application/octet-stream")]
+		public static const level_data:Class;
+		
+		[Embed(source = "./xml_data.tmx", mimeType="application/octet-stream")]
+		public static const xml_data:Class;
     }
 }

@@ -1,11 +1,15 @@
 package scenes 
 {
-	import enemy.Enemy;
 	import flash.ui.Keyboard;
 	import game.Action;
+	import game.Dir;
+	import game.enemy.Enemy;
+	import game.enemy.EnemyType;
 	import game.math.To;
 	import game.Obj;
 	import game.phys.Phys;
+	import game.player.Player;
+	import game.player.PlayerController;
 	import nape.geom.Ray;
 	import nape.geom.RayResult;
 	import nape.geom.RayResultList;
@@ -14,8 +18,7 @@ package scenes
 	import nape.phys.BodyType;
 	import nape.shape.Polygon;
 	import nape.shape.Shape;
-	import player.Player;
-	import player.PlayerController;
+	import nape.space.Space;
 	import starling.core.Starling;
 	import starling.events.Event;
 	import starling.events.KeyboardEvent;
@@ -60,7 +63,7 @@ package scenes
 			// init Nape
 			var gravity:Vec2 = Vec2.weak(0, 0);
 			Phys.initNape(gravity);
-			
+						
 			// create static border
 			Phys.createBounderies();
 			
@@ -71,8 +74,47 @@ package scenes
 		{
 			removeEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
 			
+			// add level data
+			var levelData:Object = Game.assets.getObject("level_data");
+			var xmlData:Object = Game.assets.getXml("xml_data");
+			
+			// add obstacels
+			var obstacles:XMLList = xmlData.objectgroup.(@name == "obstacles").object;
+			
+			for each(var obstacle:XML in obstacles)
+			{
+				var position:Vec2 = new Vec2(obstacle.@x, obstacle.@y); 
+				Phys.addObstacle(position, obstacle.@width, obstacle.@height);
+			}
+			
+			// add enemies
+			var enemies:XMLList = xmlData.objectgroup.(@name == "enemies").object;
+			
+			for each(var enemy:XML in enemies)
+			{
+				position = new Vec2(enemy.@x, enemy.@y);
+				
+				var property:XMLList = enemy.properties.property;
+				var type:String = property.(@name == "type").@value;
+				
+				if (type == "patrol")
+				{
+					var targetX:Number = property.(@name == "targetX").@value;
+					var targetY:Number = property.(@name == "targetY").@value;
+					var target:Vec2 = new Vec2(targetX, targetY);
+					
+					var newEnemy:Enemy = new Enemy(EnemyType.PATROL, position, target);
+				}
+				else
+				{
+					var newEnemy:Enemy = new Enemy(EnemyType.GUARD, position);
+				}
+				
+				
+			}
+			
 			// add player
-			var position:Vec2 = new Vec2(Const.CenterX, Const.CenterY);
+			position = new Vec2(Const.CenterX, Const.CenterY);
 			_player = new Player(position);
 			_playerController = new PlayerController(_player, stage);
 			
@@ -88,8 +130,8 @@ package scenes
 			Starling.current.nativeOverlay.addChild(_raySprite);
 			
 			// add event listeners
-			stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
-			stage.addEventListener(TouchEvent.TOUCH, onTouch);
+			//stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
+			//stage.addEventListener(TouchEvent.TOUCH, onTouch);
 			addEventListener(Event.ENTER_FRAME, onEnterFrame);
 		}
 		
@@ -129,13 +171,15 @@ package scenes
 						switch (_defObj)
 						{
 							case Obj.ENEMY:
-								var enemy:Enemy = new Enemy(position, _newTarget);
 								break;
 								
 							case Obj.STATIC:
 								Phys.addObstacle(position);
 								break;
 								
+							case Obj.DYNAMIC:
+								Phys.addDynamicBox(position);
+								break;
 						}
 						break;
 						
@@ -199,7 +243,7 @@ package scenes
 		private function rayCast():void 
 		{
 			_raySprite.graphics.clear();
-			_raySprite.graphics.lineStyle(1);
+			
 			
 			// iterate through all the enemies
 			for (var i:int = 0; i < Enemy.enemies.length; ++i)
@@ -209,10 +253,16 @@ package scenes
 				
 				// cast a ray from enemy to player
 				_ray = Ray.fromSegment(enemyPos, _player.position);
-				_ray.maxDistance = 200;
+				_ray.maxDistance = 300;
 				
 				// check if the ray is withing the enemy's sight
-				if (Math.abs(_ray.direction.angle - currentEnemy.direction.angle) < Math.PI * 0.4)
+				/* angle between two vectors
+				 * angle = acos(dotProduct / (magV1 * magV2)) */
+				
+				var dotProduct:Number = currentEnemy.direction.dot(_ray.direction);
+				var angle:Number = Math.acos(dotProduct / (currentEnemy.direction.length * _ray.direction.length));
+				
+				if (angle < Math.PI * 0.4)
 					_inRange = true;
 				else
 					_inRange = false;
@@ -221,8 +271,8 @@ package scenes
 				
 				if (_rayResult && _inRange)
 				{	
-					if (_rayResult.shape.body == _player.body)
-					{
+					//if (_rayResult.shape.body == _player.body)
+					//{
 						_intersection = _ray.at(_rayResult.distance);
 						
 						// draw
@@ -230,7 +280,7 @@ package scenes
 						_raySprite.graphics.moveTo(enemyPos.x, enemyPos.y);
 						_raySprite.graphics.lineTo(_intersection.x, _intersection.y);
 					
-					}
+					//}
 					
 					
 				}
