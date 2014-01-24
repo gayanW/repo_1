@@ -68,6 +68,7 @@ package scenes
 			Phys.createBounderies();
 			
 			addEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
+			addEventListener(Event.REMOVED_FROM_STAGE, onRemovedFromStage);
 		}
 		
 		private function onAddedToStage(e:Event):void 
@@ -125,7 +126,7 @@ package scenes
 			//setupWorld();
 			
 			// debug sprites
-			_raySprite = new flash.display.Sprite();
+			if (!_raySprite) _raySprite = new flash.display.Sprite();
 			Starling.current.nativeOverlay.addChild(Phys.debugSprite);
 			Starling.current.nativeOverlay.addChild(_raySprite);
 			
@@ -286,11 +287,20 @@ package scenes
 				}
 
 			}
-			
-			
-			
-			
 		}
+		
+		public function onRemovedFromStage(e:Event):void
+		{
+			removeEventListener(Event.REMOVED_FROM_STAGE, onRemovedFromStage);
+			
+			Phys.space.clear();
+			Phys.debug.clear();
+			Phys.debugSprite.visible = false;
+			_raySprite.graphics.clear();
+			Enemy.enemies.splice(0, Enemy.enemies.length);
+		}
+		
+		
 		
 		
 	}

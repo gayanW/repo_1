@@ -53,13 +53,27 @@ package game.phys
 			_gravity = gravity;
 			
 			// setup space
-			space = new Space(_gravity);
-			space.worldLinearDrag = 1.3;
-			space.worldAngularDrag = 1.2;
+			if (!space)
+			{
+				space = new Space(_gravity);
+				space.worldLinearDrag = 1.3;
+				space.worldAngularDrag = 1.2;
+			}
 					
 			// setup debug draw
-			debug = new BitmapDebug(Const.GameWidth, Const.GameHeight, 0, true);
-			_debugSprite = debug.display;
+			if (!debug)
+			{
+				debug = new BitmapDebug(Const.GameWidth, Const.GameHeight, 0, true);
+			}
+			
+			if (!_debugSprite)
+			{
+				_debugSprite = debug.display;
+			}
+			else
+			{
+				_debugSprite.visible = true;
+			}
 						
 			return space;
 		}
