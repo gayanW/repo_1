@@ -93,30 +93,41 @@ package scenes
 			
 			for each(var enemy:XML in enemies)
 			{
-				position = new Vec2(enemy.@x, enemy.@y);
-				
 				var property:XMLList = enemy.properties.property;
 				var type:String = property.(@name == "type").@value;
 				
+				var w:Number = Number(enemy.@width);
+				var h:Number = Number(enemy.@height);
+				var x:Number = Number(enemy.@x) + (w * 0.5);
+				var y:Number = Number(enemy.@y) + (h * 0.5);
+				
+				position = new Vec2(x, y);
+								
 				if (type == "patrol")
 				{
 					var targetX:Number = property.(@name == "targetX").@value;
 					var targetY:Number = property.(@name == "targetY").@value;
 					var target:Vec2 = new Vec2(targetX, targetY);
 					
-					var newEnemy:Enemy = new Enemy(EnemyType.PATROL, position, target);
+					var pEnemy:Enemy = new Enemy(EnemyType.PATROL, position, target);
 				}
 				else
 				{
-					var newEnemy:Enemy = new Enemy(EnemyType.GUARD, position);
+					var gEnemy:Enemy = new Enemy(EnemyType.GUARD, position, null, Dir.RIGHT, enemy.@width, enemy.@height);
 				}
 				
 				
 			}
 			
 			// add player
-			position = new Vec2(Const.CenterX, Const.CenterY);
-			_player = new Player(position);
+			var player:XML = xmlData.objectgroup.(@name == "players").object[0];
+			w = Number(player.@width);
+			h = Number(player.@height);
+			x = Number(player.@x) + w * 0.5;
+			y = Number(player.@y) + h * 0.5;
+			
+			position = new Vec2(x, y);
+			_player = new Player(position, w, h);
 			_playerController = new PlayerController(_player, stage);
 			
 			// add enemy

@@ -36,7 +36,7 @@ package game.enemy
 				(
 					type:uint, position:Vec2, 
 					targetPos:Vec2 = null, direction:uint = Dir.RIGHT, 
-					w:Number = 25, h:Number = 25
+					w:Number = 26, h:Number = 26
 				) 
 		{	
 			initVars(type, position, targetPos);
@@ -62,13 +62,11 @@ package game.enemy
 		
 		private function initBody(position:Vec2, w:Number, h:Number):void 
 		{
-			// shape
-			var shape:Shape = new Polygon(Polygon.box(w, h));
-			shape.material = Material.rubber();
-			
 			body = new Body(BodyType.KINEMATIC, position);
+			
+			var shape:Shape = new Polygon(Polygon.box(w, h));
 			body.shapes.add(shape);
-			body.position = position;
+			body.setShapeMaterials(Material.rubber());
 			
 			body.space = Phys.space;
 		}
