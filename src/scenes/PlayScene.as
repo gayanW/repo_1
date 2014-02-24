@@ -76,11 +76,10 @@ package scenes
 			removeEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
 			
 			// add level data
-			var levelData:Object = Game.assets.getObject("level_data");
 			var xmlData:Object = Game.assets.getXml("xml_data");
 			
 			// add obstacels
-			var obstacles:XMLList = xmlData.objectgroup.(@name == "obstacles").object;
+			var obstacles:XMLList = xmlData.obstacles.*;
 			
 			for each(var obstacle:XML in obstacles)
 			{
@@ -89,52 +88,58 @@ package scenes
 			}
 			
 			// add enemies
-			var enemies:XMLList = xmlData.objectgroup.(@name == "enemies").object;
+			var enemies:XMLList = xmlData.enemies.enemy;
 			
 			for each(var enemy:XML in enemies)
 			{
-				var property:XMLList = enemy.properties.property;
-				var type:String = property.(@name == "type").@value;
+				var type:String = enemy.@type;
 				
-				var w:Number = Number(enemy.@width);
-				var h:Number = Number(enemy.@height);
-				var x:Number = Number(enemy.@x) + (w * 0.5);
-				var y:Number = Number(enemy.@y) + (h * 0.5);
+				var w:Number = enemy.@width;	// will automatically convert to number
+				var h:Number = enemy.@height;
+				var x:Number = enemy.@x;
+				var y:Number = enemy.@y;
 				
 				position = new Vec2(x, y);
 								
 				if (type == "patrol")
 				{
-					var targetX:Number = property.(@name == "targetX").@value;
-					var targetY:Number = property.(@name == "targetY").@value;
+					var targetX:Number = enemy.@targetX;
+					var targetY:Number = enemy.@targetY;
 					var target:Vec2 = new Vec2(targetX, targetY);
 					
 					var pEnemy:Enemy = new Enemy(EnemyType.PATROL, position, target);
 				}
-				else
+				else	// type == guard
 				{
-					var gEnemy:Enemy = new Enemy(EnemyType.GUARD, position, null, Dir.RIGHT, enemy.@width, enemy.@height);
+					var direction:uint = Dir.str2uint(enemy.@direction);
+					var gEnemy:Enemy = new Enemy(EnemyType.GUARD, position, null, direction, w, h);
 				}
 				
 				
 			}
 			
 			// add player
-			var player:XML = xmlData.objectgroup.(@name == "players").object[0];
-			w = Number(player.@width);
-			h = Number(player.@height);
-			x = Number(player.@x) + w * 0.5;
-			y = Number(player.@y) + h * 0.5;
+			var player:XML = xmlData.entities.player[0];
+			w = player.@width;
+			h = player.@height;
+			x = player.@x;
+			y = player.@y;
 			
 			position = new Vec2(x, y);
 			_player = new Player(position, w, h);
 			_playerController = new PlayerController(_player, stage);
 			
-			// add enemy
-			//_enemy = new Enemy(new Vec2(30, 30), _newTarget);
+			// add boxes
+			var boxes:XMLList = xmlData.boxes.box;
 			
-			// add some static objects
-			//setupWorld();
+			for each(var box:XML in boxes)
+			{
+				position.setxy(box.@x, box.@y);
+				Phys.addDynamicBox(position, box.@width, box.@height); 
+			}
+			
+			
+			
 			
 			// debug sprites
 			if (!_raySprite) _raySprite = new flash.display.Sprite();
@@ -145,25 +150,6 @@ package scenes
 			//stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
 			//stage.addEventListener(TouchEvent.TOUCH, onTouch);
 			addEventListener(Event.ENTER_FRAME, onEnterFrame);
-		}
-		
-		private function setupWorld():void 
-		{
-			var w:Number = 30;
-			var h:Number = 30;
-			var i:int = 0;
-			
-			// add few random obstacles  
-			var obstacles:Body = new Body(BodyType.DYNAMIC);
-			while (++i < 11)
-				obstacles.shapes.add(new Polygon
-					(
-						Polygon.rect
-							(
-								Math.random() * Const.GameWidth, 
-								Math.random() * Const.GameHeight, w, h)));
-				
-			obstacles.space = Phys.space;
 		}
 		
 		private function onTouch(e:TouchEvent):void 

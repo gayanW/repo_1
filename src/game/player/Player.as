@@ -34,7 +34,7 @@ package game.player
 		{
 			// shape
 			var shape:Polygon = new Polygon(Polygon.box(w, h));
-			shape.material = Material.rubber();
+			//shape.material = Material.rubber();
 			
 			
 			// body

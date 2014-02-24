@@ -41,7 +41,7 @@ package
 		
 		// Level Data
 		
-		[Embed(source = "./xml_data.tmx", mimeType="application/octet-stream")]
+		[Embed(source = "./maps/level.oel", mimeType="application/octet-stream")]
 		public static const xml_data:Class;
     }
 }

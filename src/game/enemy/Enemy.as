@@ -114,10 +114,10 @@ package game.enemy
 			switch (direction)
 			{
 				case Dir.UP:
-					dir = new Vec2(0, 1);
+					dir = new Vec2(0, -1);
 					break;
 				case Dir.DOWN:
-					dir = new Vec2(0, -1);
+					dir = new Vec2(0, 1);
 					break;
 				case Dir.LEFT:
 					dir = new Vec2( -1, 0);

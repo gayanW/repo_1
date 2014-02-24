@@ -115,14 +115,13 @@ package game.phys
 			obstacles.space = space;
 		}
 		
-		public static function addDynamicBox(position:Vec2):void
+		public static function addDynamicBox(position:Vec2, w:Number = 32, h:Number = 32):void
 		{
 			var x:Number = position.x;
 			var y:Number = position.y;
-			var w:Number = 30, h:Number = 30;
-			
+						
 			var dynamicBox:Body = new Body(BodyType.DYNAMIC, position);
-			dynamicBox.shapes.add(new Polygon(Polygon.rect(x, y, w, h)));
+			dynamicBox.shapes.add(new Polygon(Polygon.rect(0, 0, w, h)));
 			dynamicBox.space = space;
 		}
 
