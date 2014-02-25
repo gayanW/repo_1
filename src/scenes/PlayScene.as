@@ -1,6 +1,7 @@
 package scenes 
 {
 	import flash.ui.Keyboard;
+	import flash.utils.getTimer;
 	import game.Action;
 	import game.Dir;
 	import game.enemy.Enemy;
@@ -57,6 +58,9 @@ package scenes
 		private var _inRange:Boolean;
 		private var _raySprite:flash.display.Sprite;
 		
+		// performance vars
+		private var _beforeTime:int;
+		private var _afterTime:int;
 		
 		public function PlayScene() 
 		{
@@ -139,8 +143,7 @@ package scenes
 			}
 			
 			
-			
-			
+						
 			// debug sprites
 			if (!_raySprite) _raySprite = new flash.display.Sprite();
 			Starling.current.nativeOverlay.addChild(Phys.debugSprite);
@@ -251,8 +254,7 @@ package scenes
 				
 				// cast a ray from enemy to player
 				_ray = Ray.fromSegment(enemyPos, _player.position);
-				_ray.maxDistance = 300;
-				
+								
 				// check if the ray is withing the enemy's sight
 				/* angle between two vectors
 				 * angle = acos(dotProduct / (magV1 * magV2)) */
@@ -260,26 +262,35 @@ package scenes
 				var dotProduct:Number = currentEnemy.direction.dot(_ray.direction);
 				var angle:Number = Math.acos(dotProduct / (currentEnemy.direction.length * _ray.direction.length));
 				
-				if (angle < Math.PI * 0.4)
+				if (angle < 0.7854) {	// angle < 45
 					_inRange = true;
+					_ray.maxDistance = 200;	/* will affect ray test functions */
+				}
+				else if (angle < 0.9425) {	// angle < 54
+					_inRange = true;
+					_ray.maxDistance = 100;	/* limit the distance enemy can see */
+				}
+				else if (angle < 1.2566) {	// angle < 72
+					_inRange = true;
+					_ray.maxDistance = 40;	/* limit the distance enemy can see */
+				}
 				else
 					_inRange = false;
-					
+				
+				// perform a ray cast for the closet result
 				_rayResult = Phys.space.rayCast(_ray);
 				
 				if (_rayResult && _inRange)
 				{	
-					//if (_rayResult.shape.body == _player.body)
-					//{
-						_intersection = _ray.at(_rayResult.distance);
-						
-						// draw
-						if (_inRange) _raySprite.graphics.lineStyle(1, Color.RED);
-						_raySprite.graphics.moveTo(enemyPos.x, enemyPos.y);
-						_raySprite.graphics.lineTo(_intersection.x, _intersection.y);
+									
+					_intersection = _ray.at(_rayResult.distance);
 					
-					//}
-					
+					// draw
+					_raySprite.graphics.lineStyle(1, Color.OLIVE);
+					if (_rayResult.shape.body == _player.body)
+						_raySprite.graphics.lineStyle(1, Color.RED);
+					_raySprite.graphics.moveTo(enemyPos.x, enemyPos.y);
+					_raySprite.graphics.lineTo(_intersection.x, _intersection.y);
 					
 				}
 

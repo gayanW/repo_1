@@ -16,7 +16,7 @@
     <Width>1280</Width>
     <Height>1920</Height>
   </LevelMaximumSize>
-  <Filename>D:\code\flash\projects\repo_1\src\maps\1.oep</Filename>
+  <Filename>D:\code\flash\projects\repo_1\src\maps\project.oep</Filename>
   <AngleMode>Radians</AngleMode>
   <CameraEnabled>false</CameraEnabled>
   <CameraSize>
@@ -118,12 +118,12 @@
     </EntityDefinition>
     <EntityDefinition Name="enemy" Limit="-1" ResizableX="true" ResizableY="true" Rotatable="true" RotateIncrement="15">
       <Size>
-        <Width>24</Width>
-        <Height>24</Height>
+        <Width>16</Width>
+        <Height>16</Height>
       </Size>
       <Origin>
-        <X>12</X>
-        <Y>12</Y>
+        <X>8</X>
+        <Y>8</Y>
       </Origin>
       <ImageDefinition DrawMode="Rectangle" ImagePath="" Tiled="false">
         <RectColor A="255" R="255" G="0" B="0" />

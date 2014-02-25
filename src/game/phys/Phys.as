@@ -11,6 +11,7 @@ package game.phys
 	import nape.util.BitmapDebug;
 	import nape.util.Debug;
 	import starling.errors.AbstractClassError;
+	import starling.utils.Color;
 	/**
 	 * ...
 	 * @author Gayan
@@ -63,7 +64,7 @@ package game.phys
 			// setup debug draw
 			if (!debug)
 			{
-				debug = new BitmapDebug(Const.GameWidth, Const.GameHeight, 0, true);
+				debug = new BitmapDebug(Const.GameWidth, Const.GameHeight, Color.BLACK, false);
 			}
 			
 			if (!_debugSprite)
