@@ -10,8 +10,12 @@ package game.phys
 	import nape.space.Space;
 	import nape.util.BitmapDebug;
 	import nape.util.Debug;
+	import scenes.PlayScene;
+	import starling.display.Quad;
 	import starling.errors.AbstractClassError;
 	import starling.utils.Color;
+	import starling.utils.HAlign;
+	import starling.utils.VAlign;
 	/**
 	 * ...
 	 * @author Gayan
@@ -64,7 +68,7 @@ package game.phys
 			// setup debug draw
 			if (!debug)
 			{
-				debug = new BitmapDebug(Const.GameWidth, Const.GameHeight, Color.BLACK, false);
+				debug = new BitmapDebug(Const.GameWidth, Const.GameHeight, Color.BLACK, true);
 			}
 			
 			if (!_debugSprite)
@@ -114,18 +118,20 @@ package game.phys
 			obstacles.space = null;
 			obstacles.shapes.add(new Polygon(Polygon.rect(x, y, w, h)));
 			obstacles.space = space;
+			
+			if (Cond.DRAW_OBSTACLES) 
+			{
+				// create view
+				var view:Quad = new Quad(w, h, Color.NAVY, true);
+				view.setVertexColor(0, Color.WHITE);
+							
+				// update view
+				view.x = x;
+				view.y = y;
+				Game.currentScene.addChild(view);
+			}
 		}
 		
-		public static function addDynamicBox(position:Vec2, w:Number = 32, h:Number = 32):void
-		{
-			var x:Number = position.x;
-			var y:Number = position.y;
-						
-			var dynamicBox:Body = new Body(BodyType.DYNAMIC, position);
-			dynamicBox.shapes.add(new Polygon(Polygon.rect(0, 0, w, h)));
-			dynamicBox.space = space;
-		}
-
 		
 		public static function set gravity(value:Vec2):void
 		{

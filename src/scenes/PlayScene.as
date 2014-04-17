@@ -8,6 +8,7 @@ package scenes
 	import game.enemy.EnemyType;
 	import game.math.To;
 	import game.Obj;
+	import game.phys.DynamicBox;
 	import game.phys.Phys;
 	import game.player.Player;
 	import game.player.PlayerController;
@@ -21,11 +22,14 @@ package scenes
 	import nape.shape.Shape;
 	import nape.space.Space;
 	import starling.core.Starling;
+	import starling.display.Image;
+	import starling.display.Stage;
 	import starling.events.Event;
 	import starling.events.KeyboardEvent;
 	import starling.events.Touch;
 	import starling.events.TouchEvent;
 	import starling.events.TouchPhase;
+	import starling.textures.Texture;
 	import starling.utils.Color;
 	
 	import flash.display.Sprite;
@@ -42,11 +46,6 @@ package scenes
 		private var _player:Player;
 		private var _playerController:PlayerController;
 		
-		// enemy
-		private var _enemy:Enemy;
-		private var _newTarget:Vec2;
-		
-		
 		// variables required for user interactivity
 		private var _defObj:uint;
 		private var _defAction:uint;
@@ -61,6 +60,7 @@ package scenes
 		// performance vars
 		private var _beforeTime:int;
 		private var _afterTime:int;
+		
 		
 		public function PlayScene() 
 		{
@@ -79,8 +79,25 @@ package scenes
 		{
 			removeEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
 			
-			// add level data
-			var xmlData:Object = Game.assets.getXml("xml_data");
+			// load level
+			loadMapData(0);
+			loadMapVisuals(0);
+						
+			// debug sprites
+			if (!_raySprite) _raySprite = new flash.display.Sprite();
+			//Starling.current.nativeOverlay.addChild(Phys.debugSprite);
+			Starling.current.nativeOverlay.addChild(_raySprite);
+			
+			// add event listeners
+			//stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
+			//stage.addEventListener(TouchEvent.TOUCH, onTouch);
+			addEventListener(Event.ENTER_FRAME, onEnterFrame);
+		}
+		
+		private function loadMapData(index:uint):void 
+		{
+			// get level data
+			var xmlData:XML = Game.assets.getXml("level_" + index);
 			
 			// add obstacels
 			var obstacles:XMLList = xmlData.obstacles.*;
@@ -118,8 +135,15 @@ package scenes
 					var direction:uint = Dir.str2uint(enemy.@direction);
 					var gEnemy:Enemy = new Enemy(EnemyType.GUARD, position, null, direction, w, h);
 				}
-				
-				
+			}
+			
+			// add boxes
+			var boxes:XMLList = xmlData.boxes.box;
+			
+			for each(var box:XML in boxes)
+			{
+				position.setxy(box.@x, box.@y);
+				new DynamicBox(position, box.@width, box.@height); 
 			}
 			
 			// add player
@@ -131,88 +155,17 @@ package scenes
 			
 			position = new Vec2(x, y);
 			_player = new Player(position, w, h);
-			_playerController = new PlayerController(_player, stage);
-			
-			// add boxes
-			var boxes:XMLList = xmlData.boxes.box;
-			
-			for each(var box:XML in boxes)
-			{
-				position.setxy(box.@x, box.@y);
-				Phys.addDynamicBox(position, box.@width, box.@height); 
-			}
-			
-			
-						
-			// debug sprites
-			if (!_raySprite) _raySprite = new flash.display.Sprite();
-			Starling.current.nativeOverlay.addChild(Phys.debugSprite);
-			Starling.current.nativeOverlay.addChild(_raySprite);
-			
-			// add event listeners
-			//stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
-			//stage.addEventListener(TouchEvent.TOUCH, onTouch);
-			addEventListener(Event.ENTER_FRAME, onEnterFrame);
+			_playerController = new PlayerController(_player);
 		}
 		
-		private function onTouch(e:TouchEvent):void 
+		private function loadMapVisuals(index:uint):void
 		{
-			var touch:Touch = e.getTouch(stage, TouchPhase.ENDED);
-			
-			if (touch)
-			{
-				// record touch position
-				var position:Vec2 = new Vec2(touch.globalX, touch.globalY);
-				
-				// choose what action to perform
-				switch (_defAction)
-				{
-					case Action.ADD_OBJECT:
-						// select the object that needs to be added
-						switch (_defObj)
-						{
-							case Obj.ENEMY:
-								break;
-								
-							case Obj.STATIC:
-								Phys.addObstacle(position);
-								break;
-								
-							case Obj.DYNAMIC:
-								Phys.addDynamicBox(position);
-								break;
-						}
-						break;
-						
-					case Action.SET_ENEMY_TARGET:
-						_newTarget = position;
-						break;
-						
-				}
-			}
+			// add background
+			var texture:Texture = Game.assets.getTexture("background_" + index);
+			var background:Image = new Image(texture);
+			addChild(background);
 		}
-		
-		private function onKeyDown(e:KeyboardEvent):void 
-		{
-			// handle keyboard events
-			if (e.keyCode == Keyboard.E) {
-				_defAction = Action.ADD_OBJECT;
-				_defObj = Obj.ENEMY;
-			}
-			else if (e.keyCode == Keyboard.NUMBER_0) {
-				_defAction = Action.ADD_OBJECT;
-				_defObj = Obj.STATIC;
-			}
-			else if (e.keyCode == Keyboard.NUMBER_2) {
-				_defAction = Action.ADD_OBJECT;
-				_defObj = Obj.DYNAMIC;
-			}
-			else if (e.keyCode == Keyboard.T) {
-				_defAction = Action.SET_ENEMY_TARGET;
-			}
-				
-		}
-		
+
 		private function onEnterFrame(e:Event):void 
 		{
 			// update space
@@ -220,17 +173,21 @@ package scenes
 			
 			// update player
 			_player.update();
+			_player.updateView();
 			
 			// update enemies
 			updateEnemies();
+			
+			// update other visuals
+			DynamicBox.updateViews();
 			
 			// ray cast
 			rayCast();
 			
 			
 			// debug draw
-			Phys.debugDraw();
-			
+			//Phys.debugDraw();
+					
 		}
 		
 		private function updateEnemies():void 
@@ -238,6 +195,7 @@ package scenes
 			for (var i:int = 0; i < Enemy.enemies.length; ++i)
 			{
 				Enemy.at(i).update();
+				Enemy.at(i).updateView();
 			}
 		}
 		
@@ -308,9 +266,63 @@ package scenes
 			Enemy.enemies.splice(0, Enemy.enemies.length);
 		}
 		
+		/*private function onTouch(e:TouchEvent):void 
+		{
+			var touch:Touch = e.getTouch(stage, TouchPhase.ENDED);
+			
+			if (touch)
+			{
+				// record touch position
+				var position:Vec2 = new Vec2(touch.globalX, touch.globalY);
+				
+				// choose what action to perform
+				switch (_defAction)
+				{
+					case Action.ADD_OBJECT:
+						// select the object that needs to be added
+						switch (_defObj)
+						{
+							case Obj.ENEMY:
+								break;
+								
+							case Obj.STATIC:
+								Phys.addObstacle(position);
+								break;
+								
+							case Obj.DYNAMIC:
+								Phys.addDynamicBox(position);
+								break;
+						}
+						break;
+						
+					case Action.SET_ENEMY_TARGET:
+						_newTarget = position;
+						break;
+						
+				}
+			}
+		}
 		
-		
-		
+		private function onKeyDown(e:KeyboardEvent):void 
+		{
+			// handle keyboard events
+			if (e.keyCode == Keyboard.E) {
+				_defAction = Action.ADD_OBJECT;
+				_defObj = Obj.ENEMY;
+			}
+			else if (e.keyCode == Keyboard.NUMBER_0) {
+				_defAction = Action.ADD_OBJECT;
+				_defObj = Obj.STATIC;
+			}
+			else if (e.keyCode == Keyboard.NUMBER_2) {
+				_defAction = Action.ADD_OBJECT;
+				_defObj = Obj.DYNAMIC;
+			}
+			else if (e.keyCode == Keyboard.T) {
+				_defAction = Action.SET_ENEMY_TARGET;
+			}
+				
+		}*/
 	}
 
 }

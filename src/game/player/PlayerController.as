@@ -1,8 +1,8 @@
 package game.player 
 {
-	import Box2D.Common.Math.b2Vec2;
 	import flash.ui.Keyboard;
 	import game.Key;
+	import starling.core.Starling;
 	import starling.display.Stage;
 	import starling.events.KeyboardEvent;
 	/**
@@ -15,11 +15,11 @@ package game.player
 		private var _stage:Stage;
 			
 		
-		public function PlayerController(model:Player, stage:Stage) 
+		public function PlayerController(model:Player) 
 		{
 			// references
 			_model = model;
-			_stage = stage;
+			_stage = Starling.current.stage;
 			
 			_stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
 			_stage.addEventListener(KeyboardEvent.KEY_UP, onKeyUp);

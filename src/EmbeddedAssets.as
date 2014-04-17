@@ -26,7 +26,7 @@ package
         [Embed(source = "../assets/textures/1x/compressed_texture.atf", mimeType="application/octet-stream")]
         public static const compressed_texture:Class;
         
-        // Bitmap Fonts
+        // Bitmap Fonts	------------------------------------------------------------------------
         
         [Embed(source="../assets/fonts/1x/desyrel.fnt", mimeType="application/octet-stream")]
         public static const desyrel_fnt:Class;
@@ -39,9 +39,16 @@ package
         [Embed(source="../assets/audio/wing_flap.mp3")]
         public static const wing_flap:Class;
 		
-		// Level Data
-		
+		// Level Data (XML)
 		[Embed(source = "./maps/level_0.oel", mimeType="application/octet-stream")]
-		public static const xml_data:Class;
+		public static const level_0:Class;
+		
+		// Game Entities
+		[Embed(source = "../assets/textures/1x/entities/enemy.png")]
+		public static const enemy:Class;
+		
+		// Map Textures
+		[Embed(source = "../assets/textures/1x/map_data/background_0.png")]
+		public static const background_0:Class;
     }
 }

@@ -25,7 +25,7 @@ package
         
         private var mLoadingProgress:ProgressBar;
         private var mMainMenu:MainMenu;
-        private var mCurrentScene:Scene;
+        private static var _currentScene:Scene;
         private var _container:Sprite;
         
         private static var sAssets:AssetManager;
@@ -107,21 +107,23 @@ package
         
         private function closeScene():void
         {
-            mCurrentScene.removeFromParent(true);
-            mCurrentScene = null;
+            _currentScene.removeFromParent(true);
+            _currentScene = null;
             showMainMenu();
         }
         
         private function showScene(name:String):void
         {
-            if (mCurrentScene) return;
+            if (_currentScene) return;
             
             var sceneClass:Class = getDefinitionByName(name) as Class;
-            mCurrentScene = new sceneClass() as Scene;
+            _currentScene = new sceneClass() as Scene;
             mMainMenu.removeFromParent();
-            addChild(mCurrentScene);
+            addChild(_currentScene);
         }
         
         public static function get assets():AssetManager { return sAssets; }
+		
+		public static function get currentScene():Scene { return _currentScene; }
     }
 }

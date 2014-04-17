@@ -8,8 +8,14 @@ package game.enemy
 	import nape.phys.Material;
 	import nape.shape.Polygon;
 	import nape.shape.Shape;
+	import scenes.PlayScene;
+	import starling.core.Starling;
+	import starling.display.Image;
 	import starling.display.Quad;
 	import starling.display.QuadBatch;
+	import starling.display.Sprite;
+	import starling.display.Stage;
+	import starling.textures.Texture;
 	/**
 	 * ...
 	 * @author Gayan
@@ -30,6 +36,11 @@ package game.enemy
 		
 		private var _type:uint;
 		
+		// view of the enemy
+		private static var _texture:Texture;
+		private var _view:Image;
+		
+		// vector that holds all the enemy objects
 		public static var enemies:Vector.<Enemy> = new Vector.<Enemy>();
 		
 		public function Enemy
@@ -41,6 +52,7 @@ package game.enemy
 		{	
 			initVars(type, position, targetPos);
 			initBody(position, w, h);
+			createView();
 			
 			// set initial target
 			if (_type == EnemyType.PATROL)
@@ -58,6 +70,23 @@ package game.enemy
 			_pointA = position;
 			_pointB = targetPos;
 			
+		}
+		
+		private function createView():void
+		{
+			if (_texture == null)
+				_texture = Game.assets.getTexture("enemy");
+				
+			_view = new Image(_texture);
+			_view.alignPivot();
+			Game.currentScene.addChild(_view);
+			
+		}
+		
+		public function updateView():void
+		{
+			_view.x = body.position.x;
+			_view.y = body.position.y;
 		}
 		
 		private function initBody(position:Vec2, w:Number, h:Number):void 

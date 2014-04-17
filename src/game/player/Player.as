@@ -1,8 +1,6 @@
 package game.player 
 {
-	import Box2D.Common.Math.b2Vec2;
 	import game.Key;
-	import game.phys.B2Model;
 	import game.phys.Phys;
 	import nape.geom.Vec2;
 	import nape.phys.Body;
@@ -10,6 +8,8 @@ package game.player
 	import nape.phys.Material;
 	import nape.shape.Polygon;
 	import nape.shape.Shape;
+	import starling.display.Image;
+	import starling.textures.Texture;
 	/**
 	 * ...
 	 * @author Gayan
@@ -20,6 +20,9 @@ package game.player
 		private var force:Number;
 		private var acceleration:Number;
 		public var body:Body;
+		
+		private static var _texture:Texture;
+		private var _view:Image;
 		
 		public function Player(position:Vec2, w:Number = 26, h:Number= 26) 
 		{
@@ -44,6 +47,16 @@ package game.player
 			body.allowRotation = false;
 			body.space = Phys.space;
 			
+			// view
+			createView();
+		}
+		
+		private function createView():void 
+		{
+			_texture = Game.assets.getTexture("enemy");
+			_view = new Image(_texture);
+			_view.alignPivot();
+			Game.currentScene.addChild(_view);
 		}
 		
 		public function update():void
@@ -63,6 +76,12 @@ package game.player
 			if (Key.RIGHT) { 
 				body.applyImpulse(Vec2.weak(force, 0));
 			}
+		}
+		
+		public function updateView():void
+		{
+			_view.x = body.position.x;
+			_view.y = body.position.y;
 		}
 		
 		public function get position():Vec2
