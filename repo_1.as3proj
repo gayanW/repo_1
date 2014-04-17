@@ -78,6 +78,18 @@
   <!-- Paths to exclude from the Project Explorer tree -->
   <hiddenPaths>
     <hidden path="obj" />
+    <hidden path="src\scenes\AnimationScene.as" />
+    <hidden path="src\scenes\BenchmarkScene.as" />
+    <hidden path="src\scenes\BlendModeScene.as" />
+    <hidden path="src\scenes\CustomHitTestScene.as" />
+    <hidden path="src\scenes\FilterScene.as" />
+    <hidden path="src\scenes\MaskScene.as" />
+    <hidden path="src\scenes\MovieScene.as" />
+    <hidden path="src\scenes\RenderTextureScene.as" />
+    <hidden path="src\scenes\Scene.as" />
+    <hidden path="src\scenes\TextScene.as" />
+    <hidden path="src\scenes\TextureScene.as" />
+    <hidden path="src\scenes\TouchScene.as" />
   </hiddenPaths>
   <!-- Executed before build -->
   <preBuildCommand />
@@ -85,7 +97,7 @@
   <postBuildCommand alwaysRun="False" />
   <!-- Other project options -->
   <options>
-    <option showHiddenPaths="False" />
+    <option showHiddenPaths="True" />
     <option testMovie="Default" />
     <option testMovieCommand="" />
   </options>
