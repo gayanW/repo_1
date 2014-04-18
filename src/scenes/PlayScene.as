@@ -21,7 +21,10 @@ package scenes
 	import nape.shape.Polygon;
 	import nape.shape.Shape;
 	import nape.space.Space;
+	import starling.animation.Transitions;
+	import starling.animation.Tween;
 	import starling.core.Starling;
+	import starling.display.BlendMode;
 	import starling.display.Image;
 	import starling.display.Stage;
 	import starling.events.Event;
@@ -61,6 +64,10 @@ package scenes
 		private var _beforeTime:int;
 		private var _afterTime:int;
 		
+		// effects
+		private var _effectCounter:uint = 0;
+		private var _step:int = -1;
+		private var _cloudEffect:Image;
 		
 		public function PlayScene() 
 		{
@@ -160,10 +167,42 @@ package scenes
 		
 		private function loadMapVisuals(index:uint):void
 		{
-			// add background
-			var texture:Texture = Game.assets.getTexture("background_" + index);
-			var background:Image = new Image(texture);
-			addChild(background);
+			// add sky
+			var texture:Texture = Game.assets.getTexture("sky");
+			var sky:Image = new Image(texture);
+			addChild(sky);
+			
+			/// add game entities
+			// add player view
+			addChild(_player.view);
+			
+			// add view of the enemies
+			for (var i:int = 0; i < Enemy.enemies.length; ++i)
+			{
+				addChild(Enemy.enemies[i].view);
+			}
+			
+			// view of the dynamic boxes
+			for (i = 0; i < DynamicBox.boxes.length; ++i)
+			{
+				addChild(DynamicBox.boxes[i].view);
+			}
+			
+			// add map
+			texture = Game.assets.getTexture("map_" + index);
+			var map:Image = new Image(texture);
+			addChild(map);
+			
+			// add effects
+			_cloudEffect = new Image(Game.assets.getTexture("cloud_effect"));
+			//_cloudEffect.blendMode = BlendMode.MULTIPLY;
+			addChild(_cloudEffect);
+			
+			var cloudTween:Tween = new Tween(_cloudEffect, 25.0, Transitions.EASE_IN_OUT);
+			cloudTween.moveTo( - (_cloudEffect.width - Const.GameWidth - 5), 0);
+			cloudTween.repeatCount = 0;
+			cloudTween.reverse = true;
+			Starling.juggler.add(cloudTween);
 		}
 
 		private function onEnterFrame(e:Event):void 

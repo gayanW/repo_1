@@ -20,9 +20,9 @@ package game.phys
 		
 		// view
 		private var _texture:Texture;
-		private var _image:Image;
+		public var view:Image;
 		
-		public function DynamicBox(position:Vec2, w:Number = 32, h:Number = 32) 
+		public function DynamicBox(position:Vec2, w:Number = 24, h:Number = 24) 
 		{
 			// init body
 			_body = new Body(BodyType.DYNAMIC, position);
@@ -37,17 +37,16 @@ package game.phys
 		
 		private function createView():void 
 		{
-			_texture = Game.assets.getTexture("enemy");
-			_image = new Image(_texture);
-			_image.alignPivot();
-			Starling.current.stage.addChild(_image);
+			_texture = Game.assets.getTexture("dynamic_box");
+			view = new Image(_texture);
+			view.alignPivot();
 		}
 		
 		private function updateView():void
 		{
-			_image.x = _body.position.x;
-			_image.y = _body.position.y;
-			_image.rotation = _body.rotation;
+			view.x = _body.position.x;
+			view.y = _body.position.y;
+			view.rotation = _body.rotation;
 		}
 		
 		public static function updateViews():void

@@ -33,12 +33,12 @@ package game.enemy
 		private var _updateLimit:uint = 5000;
 		
 		private var _direction:Vec2;
-		
+		private var _dir:uint;
 		private var _type:uint;
 		
 		// view of the enemy
 		private static var _texture:Texture;
-		private var _view:Image;
+		public var view:Image;
 		
 		// vector that holds all the enemy objects
 		public static var enemies:Vector.<Enemy> = new Vector.<Enemy>();
@@ -47,10 +47,10 @@ package game.enemy
 				(
 					type:uint, position:Vec2, 
 					targetPos:Vec2 = null, direction:uint = Dir.RIGHT, 
-					w:Number = 26, h:Number = 26
+					w:Number = 24, h:Number = 24
 				) 
 		{	
-			initVars(type, position, targetPos);
+			initVars(type, position, targetPos, direction);
 			initBody(position, w, h);
 			createView();
 			
@@ -64,12 +64,12 @@ package game.enemy
 			enemies.push(this);
 		}
 		
-		private function initVars(type:uint, position:Vec2, targetPos:Vec2):void 
+		private function initVars(type:uint, position:Vec2, targetPos:Vec2, dir:uint):void 
 		{
 			_type = type;
 			_pointA = position;
 			_pointB = targetPos;
-			
+			_dir = dir;
 		}
 		
 		private function createView():void
@@ -77,16 +77,31 @@ package game.enemy
 			if (_texture == null)
 				_texture = Game.assets.getTexture("enemy");
 				
-			_view = new Image(_texture);
-			_view.alignPivot();
-			Game.currentScene.addChild(_view);
-			
+			view = new Image(_texture);
+			view.alignPivot();
 		}
 		
 		public function updateView():void
 		{
-			_view.x = body.position.x;
-			_view.y = body.position.y;
+			view.x = body.position.x;
+			view.y = body.position.y;
+			
+			switch (_dir)
+			{
+				case Dir.DOWN:
+					view.rotation = 0;
+					break;
+				case Dir.UP:
+					view.rotation = Math.PI;	// 180
+					break;
+				case Dir.LEFT:
+					view.rotation = Math.PI * 0.5;	// 90
+					break;
+				case Dir.RIGHT:
+					view.rotation = -(Math.PI * 0.5)	// -90
+					break;
+			}
+			
 		}
 		
 		private function initBody(position:Vec2, w:Number, h:Number):void 

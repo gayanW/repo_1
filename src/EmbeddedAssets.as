@@ -47,8 +47,17 @@ package
 		[Embed(source = "../assets/textures/1x/entities/enemy.png")]
 		public static const enemy:Class;
 		
+		[Embed(source = "../assets/textures/1x/entities/dynamic_box.png")]
+		public static const dynamic_box:Class;
+		
 		// Map Textures
-		[Embed(source = "../assets/textures/1x/map_data/background_0.png")]
-		public static const background_0:Class;
+		[Embed(source = "../assets/textures/1x/map_data/sky.JPG")]
+		public static const sky:Class;
+		
+		[Embed(source = "../assets/textures/1x/map_data/map_0.png")]
+		public static const map_0:Class;
+		
+		[Embed(source = "../assets/textures/1x/effects/cloud_effect.png")]
+		public static const cloud_effect:Class;
     }
 }

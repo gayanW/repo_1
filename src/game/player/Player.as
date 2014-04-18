@@ -22,9 +22,9 @@ package game.player
 		public var body:Body;
 		
 		private static var _texture:Texture;
-		private var _view:Image;
+		public var view:Image;
 		
-		public function Player(position:Vec2, w:Number = 26, h:Number= 26) 
+		public function Player(position:Vec2, w:Number = 24, h:Number= 24) 
 		{
 			initBody(position, w, h);
 		
@@ -54,9 +54,8 @@ package game.player
 		private function createView():void 
 		{
 			_texture = Game.assets.getTexture("enemy");
-			_view = new Image(_texture);
-			_view.alignPivot();
-			Game.currentScene.addChild(_view);
+			view = new Image(_texture);
+			view.alignPivot();
 		}
 		
 		public function update():void
@@ -80,8 +79,8 @@ package game.player
 		
 		public function updateView():void
 		{
-			_view.x = body.position.x;
-			_view.y = body.position.y;
+			view.x = body.position.x;
+			view.y = body.position.y;
 		}
 		
 		public function get position():Vec2
